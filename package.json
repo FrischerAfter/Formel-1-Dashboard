@@ -1,0 +1,18 @@
+{
+  "name": "f1-live-dashboard",
+  "version": "1.0.0",
+  "description": "F1 Live Dashboard 2026 – Live-Daten & Bilder von motorsport-total.com",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "sharp": "^0.35.3"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

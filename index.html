@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 Live Dashboard 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <!-- (kein separates CSS für globe.gl nötig) -->
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Ladeanimation: F1-Startampel -->
+  <div id="loader" class="loader">
+    <div class="start-lights" aria-hidden="true">
+      <span class="light"></span><span class="light"></span><span class="light"></span>
+      <span class="light"></span><span class="light"></span>
+    </div>
+    <p>Lichter aus und los – lade Live-Daten von der Rennstrecke …</p>
+  </div>
+
+  <!-- Fehlerbanner -->
+  <div id="error-banner" class="error-banner hidden"></div>
+
+  <div id="dashboard" class="dashboard hidden">
+    <!-- Kopf -->
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand-mark" src="/assets/f1-logo.png" alt="F1 Logo">
+        <div>
+          <h1>Live Dashboard</h1>
+          <p id="subtitle">Saison 2026</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="updated" class="updated"></span>
+        <button id="refresh-btn" class="refresh-btn" title="Jetzt aktualisieren">
+          <span class="refresh-icon">⟳</span> Aktualisieren
+        </button>
+      </div>
+    </header>
+
+    <!-- Obere Navigation (Tabs) -->
+    <nav class="top-nav" id="top-nav">
+      <button class="nav-tab" data-page="home">Home</button>
+      <button class="nav-tab" data-page="news">News</button>
+      <button class="nav-tab" data-page="schedule">Schedule</button>
+      <button class="nav-tab" data-page="results">Results</button>
+      <button class="nav-tab" data-page="driver-standings">Driver Standings</button>
+      <button class="nav-tab" data-page="constructor-standings">Constructor Standings</button>
+      <button class="nav-tab" data-page="drivers">Drivers</button>
+      <button class="nav-tab" data-page="teams">Teams</button>
+      <button class="nav-tab" data-page="stats">Stats</button>
+      <button class="nav-tab" data-page="headtohead">Head to Head</button>
+      <button class="nav-tab" data-page="destructors">Destructors</button>
+    </nav>
+
+    <!-- ============================== HOME ============================== -->
+    <section class="page" data-page="home">
+      <section id="next-race" class="glass next-race"></section>
+      <section id="weather-widget" class="glass weather-widget"></section>
+      <div class="home-grid">
+        <section class="glass panel">
+          <div class="panel-head"><h2>Top 3 Fahrer</h2></div>
+          <div id="home-top-drivers" class="home-top-list"></div>
+        </section>
+        <section class="glass panel">
+          <div class="panel-head"><h2>Top 3 Konstrukteure</h2></div>
+          <div id="home-top-teams" class="home-top-list"></div>
+        </section>
+        <section class="glass panel">
+          <div class="panel-head"><h2>Letztes Rennen</h2></div>
+          <div id="home-last-race" class="home-last-race"></div>
+        </section>
+      </div>
+
+      <div class="fav-section-title">Deine Favoriten</div>
+      <div class="fav-grid">
+        <section class="glass fav-card">
+          <div class="panel-head">
+            <h2>Lieblingsfahrer</h2>
+            <select id="fav-driver" class="select"></select>
+          </div>
+          <div id="driver-showcase" class="showcase"></div>
+        </section>
+        <section class="glass fav-card">
+          <div class="panel-head">
+            <h2>Lieblingsteam</h2>
+            <select id="fav-team" class="select"></select>
+          </div>
+          <div id="team-showcase" class="showcase"></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ============================== NEWS ============================== -->
+    <section class="page" data-page="news">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Formel-1-News</h2>
+          <span class="results-hint">Quelle: motorsport-total.com – Klick öffnet den Originalartikel</span>
+        </div>
+        <div id="news-list" class="news-list"></div>
+      </section>
+    </section>
+
+    <!-- ============================== SCHEDULE ============================== -->
+    <section class="page" data-page="schedule">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2 id="schedule-title">Rennkalender</h2>
+          <span class="results-hint">Rennen anklicken, um die Strecke auf der Karte zu sehen</span>
+        </div>
+        <div id="schedule-map" class="schedule-map"></div>
+        <div class="schedule-map-hint">🔍 Reinzoomen (Scrollrad/Pinch) schaltet auf Satellitenbilder um – die Flaggen blenden sich dabei kurz vor der Strecke aus.</div>
+        <div class="schedule-map-hint" id="schedule-map-hint"></div>
+        <div id="schedule-map-note" class="schedule-map-note"></div>
+        <div id="schedule-detail" class="sched-detail"></div>
+        <div id="schedule-list" class="schedule-list"></div>
+      </section>
+    </section>
+
+    <!-- ============================== RESULTS ============================== -->
+    <section class="page" data-page="results">
+      <section class="glass panel results-panel">
+        <div class="panel-head">
+          <h2>Rennergebnisse 2026</h2>
+          <span class="results-hint">Anklicken für die volle Ergebnisliste</span>
+        </div>
+        <div id="race-strip" class="race-strip"></div>
+      </section>
+    </section>
+
+    <!-- ============================== DRIVER STANDINGS ============================== -->
+    <section class="page" data-page="driver-standings">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Fahrerwertung</h2>
+          <input id="driver-search" class="search" type="search" placeholder="Fahrer suchen …" />
+        </div>
+        <div class="table-scroll">
+          <table id="driver-table" class="rank-table">
+            <thead>
+              <tr>
+                <th data-sort="pos" class="sortable th-pos">#</th>
+                <th>Fahrer</th>
+                <th data-sort="team" class="sortable th-team">Team</th>
+                <th data-sort="points" class="sortable th-pts">Punkte</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============================== CONSTRUCTOR STANDINGS ============================== -->
+    <section class="page" data-page="constructor-standings">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Constructors Championship</h2>
+          <span class="results-hint">Punkte, Siege &amp; Podien im Vergleich</span>
+        </div>
+        <div id="champ-bars" class="champ-bars"></div>
+      </section>
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Konstrukteurswertung</h2>
+          <input id="team-search" class="search" type="search" placeholder="Team suchen …" />
+        </div>
+        <div class="table-scroll">
+          <table id="team-table" class="rank-table">
+            <thead>
+              <tr>
+                <th class="th-pos">#</th>
+                <th>Team</th>
+                <th class="th-pts">Punkte</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============================== DRIVERS ============================== -->
+    <section class="page" data-page="drivers">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Fahrer</h2>
+          <input id="drivers-grid-search" class="search" type="search" placeholder="Fahrer suchen …" />
+        </div>
+        <div id="drivers-grid" class="driver-hero-grid"></div>
+      </section>
+    </section>
+
+    <!-- ============================== TEAMS ============================== -->
+    <section class="page" data-page="teams">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Teams</h2>
+          <input id="teams-grid-search" class="search" type="search" placeholder="Team suchen …" />
+        </div>
+        <div id="teams-grid" class="team-hero-list"></div>
+      </section>
+    </section>
+
+    <!-- ============================== STATS ============================== -->
+    <section class="page" data-page="stats">
+      <section class="glass panel driver-stats-panel">
+        <div class="panel-head">
+          <h2>Fahrer-Stats</h2>
+          <select id="stats-driver" class="select"></select>
+        </div>
+        <div id="driver-stats-body"></div>
+      </section>
+      <section class="glass panel chart-panel">
+        <div class="panel-head">
+          <h2>Saisonverlauf</h2>
+          <span class="results-hint">Fahrer in der Legende an-/abklicken</span>
+        </div>
+        <div id="chart-legend" class="chart-legend"></div>
+        <div id="chart-wrap" class="chart-wrap"></div>
+      </section>
+    </section>
+
+    <!-- ============================== HEAD TO HEAD ============================== -->
+    <section class="page" data-page="headtohead">
+      <section class="glass panel compare-panel">
+        <div class="panel-head">
+          <h2>Head to Head</h2>
+        </div>
+        <div class="compare-selects">
+          <select id="compare-a" class="select"></select>
+          <span class="compare-vs">VS</span>
+          <select id="compare-b" class="select"></select>
+        </div>
+        <div id="compare-body" class="compare-body"></div>
+      </section>
+    </section>
+
+    <!-- ============================== DESTRUCTORS ============================== -->
+    <section class="page" data-page="destructors">
+      <section class="glass panel">
+        <div class="panel-head">
+          <h2>Destructors Championship</h2>
+          <span class="results-hint">Wer hat 2026 die teuersten Unfälle gebaut? 💥</span>
+        </div>
+        <p class="destr-note">
+          Kein offizieller Titel – geschätzte Schadenssummen aus der F1-Community (nicht von
+          motorsport-total, keine offizielle Zählung). Nur zum Spaß, nicht als Fakt zu verstehen.
+          <span id="destr-asof"></span>
+        </p>
+        <div id="destr-list" class="destr-list"></div>
+      </section>
+    </section>
+
+    <footer class="foot">
+      Live-Daten von <strong>motorsport-total.com</strong> · Karte von <strong>OpenStreetMap</strong> ·
+      Auto-Update alle 60&nbsp;s
+    </footer>
+  </div>
+
+  <!-- Renn-Detail-Modal -->
+  <div id="race-modal" class="race-modal hidden">
+    <div class="race-modal-backdrop" id="race-modal-backdrop"></div>
+    <div class="race-modal-card glass">
+      <button id="race-modal-close" class="race-modal-close" aria-label="Schließen">✕</button>
+      <div id="race-modal-body"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/globe.gl"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
